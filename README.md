@@ -2,7 +2,8 @@
 
 This repository is the official implementation of [SUGAR: Pre-training 3D Visual Representations for Robotics](https://cshizhe.github.io/projects/robot_sugar.html) (CVPR 2024).
 
-![teaser](files/teaser.png)
+<!-- ![teaser](files/teaser.png) -->
+<img src="files/teaser.png" alt="teaser" width="600"/>
 
 
 ## Install
