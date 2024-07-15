@@ -1,0 +1,80 @@
+SEED: 2023
+output_dir: 'data3d/experiments/downstream/roborefit/pc10k-768x32-bsz.32-openclip-from.scratch'
+tfboard_log_dir: null # 'data/TFBoard/xxx'
+checkpoint: null
+checkpoint_strict_load: false # true, false
+
+TRAIN:
+  resume_training: true
+  resume_encoder_only: False
+  freeze_params:
+    encoder: False
+    decoder: False
+    all_except_head: False
+
+  train_batch_size: 32
+  val_batch_size: 32
+
+  gradient_accumulation_steps: 1
+  num_epochs: 100
+  num_train_steps: null #200000
+  warmup_steps: 2000
+  log_steps: 1000
+  save_steps: 1000
+  val_steps: 1000
+
+  optim: 'adamw'
+  learning_rate: 1e-4
+  lr_sched: 'cosine' # inverse_sqrt, linear, cosine, cosine_cycle
+  num_cosine_cycles: null # float
+  betas: [0.9, 0.98]
+  weight_decay: 0.05
+  grad_norm: 10
+  n_workers: 4
+  pin_mem: True
+
+DATASET:
+  dataset_class: 'roborefit'
+  
+  data_root: 'data3d/VLGrasp/processed_data'
+  raw_data_root: 'data3d/VLGrasp/final_dataset'
+  clip_name: 'openclip' # clip, openclip
+  num_points: 10000
+  normalize: True
+  fps_sample: False
+  use_color: True
+  augment_color: True
+  
+MODEL:
+  model_class: 'PCTRefModel'
+
+  transformer_config:
+    num_groups: 768
+    group_size: 32
+    group_use_knn: True
+    group_radius: null # 0.2
+    input_size: 6
+    hidden_size: 384
+    num_heads: 6
+    depth: 12
+
+    cross_attn_input: 'post' # pre, post, extra
+    cross_attn_layers: null
+
+    mask_ratio: 0.
+    mask_type: rand # rand, block
+
+    drop_path_rate: 0.2
+
+    detach_enc_dec: False
+    csc_skip_dec_sa: False
+
+  ref_decoder_config:
+    txt_ft_size: 1280
+    max_txt_len: 77
+    multiscale_pc_layers: [12]
+
+  loss_config:
+    focal_loss: False
+    bce_loss_weight: 1.0
+    dice_loss_weight: 1.0

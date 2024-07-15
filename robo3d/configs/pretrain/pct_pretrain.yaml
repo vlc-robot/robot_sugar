@@ -1,0 +1,242 @@
+SEED: 2023
+output_dir: 'data3d/experiments/pretrain/shapenet/debug'
+tfboard_log_dir: null # 'data/TFBoard/xxx'
+checkpoint: null
+checkpoint_strict_load: false # true, false
+
+TRAIN:
+  resume_training: true
+
+  train_batch_size: 128
+  val_batch_size: 128
+  gradient_accumulation_steps: 1
+  num_train_steps: 200000
+  warmup_steps: 5000
+  log_steps: 1000
+  save_steps: 1000
+  val_steps: 1000
+
+  optim: 'adamw'
+  learning_rate: 5e-4
+  lr_sched: 'cosine' # inverse_sqrt, linear, cosine, cosine_cycle, stepwise
+  num_cosine_cycles: null # float
+  lr_decay_step_size: null # int
+  lr_decay_gamma: null # float
+  betas: [0.9, 0.98]
+  weight_decay: 0.05
+  grad_norm: 10
+  n_workers: 4
+  pin_mem: True
+
+  trn_task_names: ['single_object', 'multi_objects', 'grasp']
+  trn_task_ratios: [1, 1, 0]
+  trn_task_batch_size: [128, 128, 128]
+
+SINGLEOBJ_DATASET:
+  dataset_names: ['shapenet', 'abo', '3dfuture', 'objaverse']
+
+  dataset_cfgs:
+    shapenet:
+      data_ids_file: 'data3d/pretrain_dataset/shapenet_openshape/train_ids.json'
+      pc_file: 'data3d/pretrain_dataset/shapenet_openshape/pc_fts'
+      img_ft_file: 'data3d/pretrain_dataset/shapenet_openshape/openclip_img_fts'
+      txt_ft_file: 'data3d/pretrain_dataset/shapenet_openshape/openclip_txt_fts'
+      txt_source: ['text', 'caption', 'retrieval_text']
+      y_up: True
+
+    abo:
+      data_ids_file: 'data3d/pretrain_dataset/ABO_openshape/train_ids.json'
+      pc_file: 'data3d/pretrain_dataset/ABO_openshape/pc_fts'
+      img_ft_file: 'data3d/pretrain_dataset/ABO_openshape/openclip_img_fts'
+      txt_ft_file: 'data3d/pretrain_dataset/ABO_openshape/openclip_txt_fts'
+      txt_source: ['text', 'caption', 'retrieval_text']
+      y_up: True
+
+    3dfuture:
+      data_ids_file: 'data3d/pretrain_dataset/3D-FUTURE_openshape/train_ids.json'
+      pc_file: 'data3d/pretrain_dataset/3D-FUTURE_openshape/pc_fts'
+      img_ft_file: 'data3d/pretrain_dataset/3D-FUTURE_openshape/openclip_img_fts'
+      txt_ft_file: 'data3d/pretrain_dataset/3D-FUTURE_openshape/openclip_txt_fts'
+      txt_source: ['text', 'caption', 'retrieval_text']
+      y_up: True
+
+    objaverse:
+      data_ids_file: 'data3d/pretrain_dataset/objaverse_openshape/train_ids_nolvis.json'
+      pc_file: 'data3d/pretrain_dataset/objaverse_openshape/pc_fts'
+      img_ft_file: 'data3d/pretrain_dataset/objaverse_openshape/openclip_img_fts'
+      txt_ft_file: 'data3d/pretrain_dataset/objaverse_openshape/openclip_txt_fts'
+      txt_source: ['text', 'caption', 'retrieval_text']
+      y_up: True
+
+  num_points: 2048
+  fps_sample: False
+  use_color: True
+  normalize: True
+  random_z_rotate: True
+  augment: True
+  augment_color: True
+  use_raw_image: False
+
+MULTIOBJ_DATASET:
+  dataset_names: ['shapenet_multiobj', 'objaverse_multiobj']
+
+  dataset_cfgs:
+    shapenet_multiobj:
+      data_ids_file: 'data3d/pretrain_dataset/shapenet_multiobj_randcam1/train_ids.json'
+      pc_file: 'data3d/pretrain_dataset/shapenet_multiobj_randcam1/pc_fts'
+      scene_img_ft_file: 'data3d/pretrain_dataset/shapenet_multiobj_randcam1/openclip_img_fts'
+      scene_txt_ft_file: 'data3d/pretrain_dataset/shapenet_multiobj_randcam1/openclip_txt_fts'
+      obj_img_ft_file: 'data3d/pretrain_dataset/shapenet_openshape/openclip_img_fts'
+      obj_txt_ft_file: 'data3d/pretrain_dataset/shapenet_openshape/openclip_txt_fts'
+      txt_source: ['text', 'caption', 'retrieval_text']
+      ref_txt_ft_file: 'data3d/pretrain_dataset/shapenet_openshape/openclip_ref_txt_fts'
+      y_up: False
+
+    objaverse_multiobj:
+      data_ids_file: 'data3d/pretrain_dataset/objaverse_multiobj_randcam3/train_ids.json'
+      pc_file: 'data3d/pretrain_dataset/objaverse_multiobj_randcam3/pc_fts'
+      scene_img_ft_file: 'data3d/pretrain_dataset/objaverse_multiobj_randcam3/openclip_img_fts'
+      scene_txt_ft_file: 'data3d/pretrain_dataset/objaverse_multiobj_randcam3/openclip_txt_fts'
+      obj_img_ft_file: 'data3d/pretrain_dataset/objaverse_openshape/openclip_img_fts'
+      obj_txt_ft_file: 'data3d/pretrain_dataset/objaverse_openshape/openclip_txt_fts'
+      txt_source: ['text', 'caption', 'retrieval_text']
+      ref_txt_ft_file: 'data3d/pretrain_dataset/objaverse_openshape/openclip_ref_txt_fts'
+      y_up: False
+    
+  num_points: 2048
+  fps_sample: False
+  use_color: True
+  normalize: True
+  random_z_rotate: True
+  random_xyz_rotate: False
+  augment: True
+  augment_color: True
+  max_ref_txt_len: 30
+  keep_background_ratio: 0.5
+
+  return_scene_fts: True
+  return_obj_fts: False
+  return_ref_fts: False
+
+GRASP_DATASET:
+  dataset_names: ['acronym_single', 'acronym_multi']
+
+  dataset_cfgs:
+    acronym_single:
+      data_ids_file: 'data3d/pretrain_dataset/acronym_grasp_single_object/train_ids.json'
+      pc_file: 'data3d/pretrain_dataset/acronym_grasp_single_object/pc_fts'
+      grasp_file: 'data3d/pretrain_dataset/acronym_grasp_single_object/grasps'
+
+    acronym_multi:
+      data_ids_file: 'data3d/pretrain_dataset/acronym_grasp_multi_object/train_ids.json'
+      pc_file: 'data3d/pretrain_dataset/acronym_grasp_multi_object/pc_fts'
+      grasp_file: 'data3d/pretrain_dataset/acronym_grasp_multi_object/grasps'
+
+  num_points: 2048
+  use_color: True
+  random_z_rotate: True
+  augment_color: True
+
+VAL_DATASET:
+  dataset_names: ['modelnet', 'scanobjectnn', 'objaverse_lvis']
+  label_embed_dir: 'data3d/pretrain_dataset/label_embeds'
+
+  dataset_cfgs:
+    modelnet:
+      num_categories: 40
+      split: test  # train, test
+      data_root: 'data3d/recon_datasets/ModelNet/modelnet40_normal_resampled'
+      input_num_points: 8192
+      output_num_points: 2048
+      y_up: True
+      fps_sample: False
+      use_color: True
+      normalize: True
+      random_z_rotate: False
+      augment: False
+    
+    scanobjectnn:
+      num_categories: 15
+      split: test  # train, test
+      no_bg: True
+      hardest_setup: False
+      data_root: 'data3d/recon_datasets/ScanObjectNN'
+      output_num_points: 2048
+      y_up: True
+      fps_sample: False
+      use_color: True
+      normalize: True
+      random_z_rotate: False
+      augment: False
+
+    objaverse_lvis:
+      data_ids_file: 'data3d/OpenShape/meta_data/split/lvis.json'
+      data_dir: 'data3d/OpenShape/objaverse-processed/merged_for_training_final/Objaverse'
+      output_num_points: 2048
+      y_up: True
+      fps_sample: False
+      use_color: True
+      normalize: True
+      random_z_rotate: False
+      augment: False
+  
+MODEL:
+  model_class: 'PCPretrainModel'
+  clip_model: 'openclip'  # clip, openclip
+
+  transformer_config:
+    num_groups: 128
+    group_size: 32
+    group_use_knn: True
+    group_radius: null #0.2
+    input_size: 6
+    hidden_size: 384
+    num_heads: 6
+    depth: 12
+
+    cross_attn_input: 'post' # pre, post, extra
+    cross_attn_layers: null
+
+    mask_ratio: 0.6
+    mask_type: rand # rand, block
+
+    drop_path_rate: 0.1
+
+    detach_enc_dec: False
+    csc_skip_dec_sa: False
+
+  mae_decoder_config:
+    depth: 4
+    num_heads: 6
+    drop_path_rate: 0.1
+
+  cross_modal_config:
+    img_ft_size: 1280
+    txt_ft_size: 1280
+
+  obj_decoder_config:
+    num_objects: 30
+
+  ref_decoder_config:
+    txt_ft_size: 1280
+    max_txt_len: 77
+    multiscale_pc_layers: [12]
+
+  loss_config:
+    mae_loss_weight: 1.0
+    mae_color_loss_weight: 0.05
+
+    csc_loss_type: 'l1' # l1, contrastive
+    csc_temperature: 0.1
+    csc_txt_loss_weight: 1.
+    csc_img_loss_weight: 1.
+
+    scene_mae_csc_loss_weight: 1.0
+    obj_loss_weight: 0.0
+    ref_loss_weight: 0.0
+
+    ref_loss:
+      focal_loss: False
+      bce_loss_weight: 1.0
+      dice_loss_weight: 1.0
+    

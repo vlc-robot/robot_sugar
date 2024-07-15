@@ -1,0 +1,135 @@
+SEED: 2023
+output_dir: 'data/experiments/single_tasks/pct/pick_up_cup+0/seed0'
+tfboard_log_dir: null # 'data/TFBoard/single_tasks/pcd_transformer/pick_up_cup+0/seed0'
+checkpoint: null
+checkpoint_strict_load: false # true, false
+
+TRAIN:
+  resume_training: true
+  resume_encoder_only: false
+
+  freeze_params:
+    encoder: False
+    decoder: False
+
+  train_batch_size: 8
+  gradient_accumulation_steps: 1
+  num_epochs: null
+  num_train_steps: 20000
+  warmup_steps: 5000
+  log_steps: 1000
+  save_steps: 5000
+
+  optim: 'adamw'
+  learning_rate: 5e-5
+  lr_sched: 'cosine' # inverse_sqrt, linear, cosine, cosine_cycle, stepwise
+  num_cosine_cycles: null # float
+  lr_decay_step_size: null # int
+  lr_decay_gamma: null # float
+  betas: [0.9, 0.98]
+  weight_decay: 0.05
+  grad_norm: 5
+  n_workers: 0
+  pin_mem: True
+
+DATASET:
+  dataset_class: 'pcd_keystep_stepwise' # pcd_keystep_stepwise, pre_pcd_keystep_stepwise
+
+  voxel_size: 0.01  # null, 0.01, 0.005
+  npoints: 2048
+  use_color: True
+  use_normal: False
+  use_height: False
+  color_drop: 0.0
+  only_success: False
+  train_success_result_dir: null
+  multi_instruction: True
+
+  use_discrete_rot: False
+  rot_resolution: 5 # degrees
+
+  sem_ft_dropout: 0.0
+  aug_shift_pcd: 0.0
+  aug_rotate_pcd: 0.0
+  
+  add_pcd_noises: False
+  pcd_noises_std: 0.01
+  remove_pcd_outliers: False
+  real_robot: False
+
+  max_episode_steps: null
+  sampled_episode_steps: 15
+  max_demos_per_taskvar: null
+
+  pc_space: 'workspace_on_table' # none, workspace, workspace_on_table, rm_gt_masked_labels
+  pc_center: 'point'  # point, gripper
+  pc_radius_norm: True # true (unit ball), false
+  
+  data_dir: 'data/train_dataset/10tasks/keysteps/seed0'
+  sem_ft_dir: null
+  taskvars: null
+  # taskvars: ['pick_and_lift+0',
+  #             'pick_up_cup+0',
+  #             'put_knife_on_chopping_board+0',
+  #             'put_money_in_safe+0',
+  #             'push_button+0',
+  #             'reach_target+0',
+  #             'slide_block_to_target+0',
+  #             'stack_wine+0',
+  #             'take_money_out_safe+0',
+  #             'take_umbrella_out_of_umbrella_stand+0']
+  # instr_embed_file: null
+  instr_embed_file: 'data/train_dataset/taskvar_instrs/openclip'
+  use_instr_embed: 'all' # none, avg, last, all
+  cameras: ('left_shoulder', 'right_shoulder', 'wrist')
+  camera_ids: [0, 1, 2]
+  gripper_channel: False
+  is_training: True
+  in_memory: True
+
+MODEL:
+  model_class: 'PCTManipulator'
+
+  max_steps: 20
+  dropout: 0.0
+  learnable_step_embedding: false
+  use_prev_action: true
+  norm_prev_action_pos: true
+  use_instr_embed: 'all' # none, avg, last, all
+  instr_embed_size: 1280 #512
+
+  action_head_config:
+    pos_pred_type: 'heatmap' # heatmap, regression
+    heatmap_temp: 0.1
+    heatmap_norm: True
+    multiscale_pc_layers: null # [4, 8, 12]
+    pc_upsampling: false
+    pc_gumbel_softmax: false
+    cat_pc_fts: false
+
+  transformer_config:
+    num_groups: 128
+    group_size: 32
+    input_size: 6
+    hidden_size: 384
+    num_heads: 6
+    depth: 12
+
+    cross_attn_input: 'post' # pre, post
+    cross_attn_layers: null
+
+    mask_ratio: 0.    
+    mask_type: rand # rand, block
+
+    drop_path_rate: 0.2
+
+    detach_enc_dec: False
+    csc_skip_dec_sa: False
+    
+  
+
+
+
+
+  
+

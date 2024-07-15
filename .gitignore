@@ -1,0 +1,17 @@
+__pycache__
+.idea
+*.pyc
+__pycache__/
+core-python-*
+bug-report-*
+build/
+*.so
+*.egg
+
+data3d
+data_rlbench
+slurm_logs
+*.egg-info*
+
+*.lock
+.~lock.*
