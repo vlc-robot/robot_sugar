@@ -1,5 +1,10 @@
 # SUGAR: Pre-training 3D Visual Representation for Robotics
 
+This repository is the official implementation of [SUGAR: Pre-training 3D Visual Representations for Robotics](https://cshizhe.github.io/projects/robot_sugar.html) (CVPR 2024).
+
+![teaser](files/teaser.png)
+
+
 ## Install
 See [INSTALL.md](INSTALL.md) for detailed instruction in installation.
 
@@ -44,4 +49,15 @@ Train and evaluate on the RLBench 10 tasks. The trained model can be downloaded 
 sbatch scripts/slurm/rlbench_train_multitask_10tasks.slurm
 sbatch scripts/slurm/rlbench_eval_val_split.slurm
 sbatch scripts/slurm/rlbench_eval_tst_split.slurm
+```
+
+## Citation
+If you find this work useful, please consider citing:
+```bib
+@InProceedings{Chen_2024_SUGAR,
+    author    = {Chen, Shizhe and Garcia, Ricardo and Laptev, Ivan and Schmid, Cordelia},
+    title     = {SUGAR: Pre-training 3D Visual Representations for Robotics},
+    booktitle = {CVPR},
+    year      = {2024}
+}
 ```
